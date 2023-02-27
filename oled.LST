@@ -1,0 +1,102 @@
+C51 COMPILER V9.54   OLED                                                                  11/17/2022 19:24:22 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE OLED
+OBJECT MODULE PLACED IN oled.OBJ
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE oled.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "oled.h"
+   2          /*******************************************************************************
+   3          * 函 数 名         : OLED_Init()
+   4          * 函数功能       : OLED初始化函数
+   5          * 输    入         : 无
+   6          * 输    出         : 无
+   7          *******************************************************************************/
+   8          void OLED_Init()
+   9          {
+  10   1        Write_IIC_Command(0xAE);//display off
+  11   1        Write_IIC_Command(0x20);//Set Memory Addressing Mode  
+  12   1        Write_IIC_Command(0x10);//00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mo
+             -de (RESET);11,Invalid
+  13   1        Write_IIC_Command(0xb0);//Set Page Start Address for Page Addressing Mode,0-7
+  14   1        Write_IIC_Command(0xc8);//Set COM Output Scan Direction
+  15   1        Write_IIC_Command(0x00);//---set low column address
+  16   1        Write_IIC_Command(0x10);//---set high column address
+  17   1        Write_IIC_Command(0x40);//--set start line address
+  18   1        Write_IIC_Command(0x81);//--set contrast control register
+  19   1        Write_IIC_Command(0xff);//亮度调节 0x00~0xff
+  20   1        Write_IIC_Command(0xa1);//--set segment re-map 0 to 127
+  21   1        Write_IIC_Command(0xa6);//--set normal display
+  22   1        Write_IIC_Command(0xa8);//--set multiplex ratio(1 to 64)
+  23   1        Write_IIC_Command(0x3F);//
+  24   1        Write_IIC_Command(0xa4);//0xa4,Output follows RAM content;0xa5,Output ignores RAM content
+  25   1        Write_IIC_Command(0xd3);//-set display offset
+  26   1        Write_IIC_Command(0x00);//-not offset
+  27   1        Write_IIC_Command(0xd5);//--set display clock divide ratio/oscillator frequency
+  28   1        Write_IIC_Command(0xf0);//--set divide ratio
+  29   1        Write_IIC_Command(0xd9);//--set pre-charge period
+  30   1        Write_IIC_Command(0x22);//
+  31   1        Write_IIC_Command(0xda);//--set com pins hardware configuration
+  32   1        Write_IIC_Command(0x12);
+  33   1        Write_IIC_Command(0xdb);//--set vcomh
+  34   1        Write_IIC_Command(0x20);//0x20,0.77xVcc
+  35   1        Write_IIC_Command(0x8d);//--set DC-DC enable
+  36   1        Write_IIC_Command(0x14);//
+  37   1        Write_IIC_Command(0xaf);//--turn on oled panel 
+  38   1      }
+  39          /*******************************************************************************
+  40          * 函 数 名         : OLED_SetPos(unsigned char x, unsigned char y)
+  41          * 函数功能       : 设置起始点坐标
+  42          * 输    入         : 起始点坐标
+  43          * 输    出         : 无
+  44          *******************************************************************************/
+  45          void OLED_SetPos(unsigned char x, unsigned char y)
+  46          { 
+  47   1        Write_IIC_Command(0xb0+x);
+  48   1        Write_IIC_Command((y&0x0f)|0x00);//LOW
+  49   1        Write_IIC_Command(((y&0xf0)>>4)|0x10);//HIGHT
+  50   1      }
+  51          /*******************************************************************************
+  52          * 函 数 名         : OLED_DrawBMP(unsigned char x0,unsigned char y0,unsigned char x1,unsigned char y1,unsi
+             -gned char BMP[])
+  53          * 函数功能       : BMP位图函数
+C51 COMPILER V9.54   OLED                                                                  11/17/2022 19:24:22 PAGE 2   
+
+  54          * 输    入         : x0,y0 -- 起始点坐标(x0:0~127, y0:0~7); x1,y1 -- 起点对角线(结束点)的坐标(x1:1~128,y1:
+             -1~8)
+  55          * 输    出         : 无
+  56          *******************************************************************************/
+  57          void OLED_DrawBMP(unsigned char x0,unsigned char y0,unsigned char x1,unsigned char y1,unsigned char BMP[])
+  58          {
+  59   1        unsigned int j=0;
+  60   1        unsigned char x,y;
+  61   1        if(y1%8==0)
+  62   1          y = y1/8;
+  63   1        else
+  64   1          y = y1/8 + 1;
+  65   1        for(y=y0;y<y1;y++)
+  66   1        {
+  67   2          //OLED_SetPos(x0,y);
+  68   2          OLED_SetPos(y,x0);
+  69   2          for(x=x0;x<x1;x++)
+  70   2          {
+  71   3            Write_IIC_Data(BMP[j++]);
+  72   3          }
+  73   2        }
+  74   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    269    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      12
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

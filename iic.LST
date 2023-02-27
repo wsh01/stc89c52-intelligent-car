@@ -1,0 +1,121 @@
+C51 COMPILER V9.54   IIC                                                                   11/17/2022 19:24:22 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE IIC
+OBJECT MODULE PLACED IN iic.OBJ
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE iic.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "iic.h"
+   2          #include "intrins.h"
+   3          /**********************************************
+   4          //IIC Start
+   5          **********************************************/
+   6          /*******************************************************************************
+   7          * 函 数 名         : IIC_Start()
+   8          * 函数功能       : IIC停止函数
+   9          * 输    入         : 无
+  10          * 输    出         : 无
+  11          *******************************************************************************/
+  12          void IIC_Start()
+  13          {
+  14   1        SCL = 1;    
+  15   1        SDA = 1;
+  16   1        _nop_();
+  17   1        SDA = 0;
+  18   1        _nop_();
+  19   1        SCL = 0;
+  20   1      }
+  21          
+  22          /**********************************************
+  23          //IIC Stop
+  24          **********************************************/
+  25          /*******************************************************************************
+  26          * 函 数 名         : IIC_Stop()
+  27          * 函数功能       : IIC停止函数
+  28          * 输    入         : 无
+  29          * 输    出         : 无
+  30          *******************************************************************************/
+  31          void IIC_Stop()
+  32          {
+  33   1        SCL = 0;
+  34   1        SDA = 0;
+  35   1        _nop_();
+  36   1        SCL = 1;
+  37   1        SDA = 1;
+  38   1        _nop_();
+  39   1      }
+  40          /*******************************************************************************
+  41          * 函 数 名         : Write_IIC_Byte(unsigned char IIC_Byte)
+  42          * 函数功能       : IIC写入字节函数
+  43          * 输    入         : IIC_Byte
+  44          * 输    出         : 无
+  45          *******************************************************************************/
+  46          void Write_IIC_Byte(unsigned char IIC_Byte)
+  47          {
+  48   1        unsigned char i;
+  49   1        for(i=0;i<8;i++)    
+  50   1        {
+  51   2          if(IIC_Byte & 0x80)
+  52   2            SDA=1;
+  53   2          else
+  54   2            SDA=0;
+  55   2          SCL=1;
+C51 COMPILER V9.54   IIC                                                                   11/17/2022 19:24:22 PAGE 2   
+
+  56   2          _nop_();
+  57   2          SCL=0;
+  58   2          _nop_();
+  59   2          IIC_Byte<<=1;
+  60   2          _nop_();
+  61   2        }
+  62   1        SDA=1;
+  63   1        SCL=1;
+  64   1        _nop_();
+  65   1        SCL=0;
+  66   1        _nop_();
+  67   1      }
+  68          /*******************************************************************************
+  69          * 函 数 名         : Write_IIC_Command(unsigned char IIC_Command)
+  70          * 函数功能       : IIC写命令函数
+  71          * 输    入         : IIC_Command
+  72          * 输    出         : 无
+  73          *******************************************************************************/
+  74          void Write_IIC_Command(unsigned char IIC_Command)
+  75          {
+  76   1         IIC_Start();
+  77   1         Write_IIC_Byte(0x78);            //从属地址,SA0=0
+  78   1         Write_IIC_Byte(0x00);      //写入命令
+  79   1         Write_IIC_Byte(IIC_Command); 
+  80   1         IIC_Stop();
+  81   1      }
+  82          /*******************************************************************************
+  83          * 函 数 名         : Write_IIC_Data(unsigned char IIC_Data)
+  84          * 函数功能       : IIC写数据函数
+  85          * 输    入         : IIC_Data
+  86          * 输    出         : 无
+  87          *******************************************************************************/
+  88          void Write_IIC_Data(unsigned char IIC_Data)
+  89          {
+  90   1         IIC_Start();
+  91   1         Write_IIC_Byte(0x78);      
+  92   1         Write_IIC_Byte(0x40);      //写入数据
+  93   1         Write_IIC_Byte(IIC_Data);
+  94   1         IIC_Stop();
+  95   1      }
+  96          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     97    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

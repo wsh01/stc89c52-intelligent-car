@@ -1,0 +1,117 @@
+C51 COMPILER V9.54   CHAOSHENGBO                                                           11/17/2022 19:24:21 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE CHAOSHENGBO
+OBJECT MODULE PLACED IN chaoshengbo.OBJ
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE chaoshengbo.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1           //超声波测距的启动与计算
+   2          #include <reg52.h>
+   3          
+   4          #include <intrins.h>
+   5          
+   6          sbit ECHO=P1^0;  //超声波接口定义
+   7          
+   8          sbit TRIG=P1^1;  //超声波接口定义
+   9          
+  10          unsigned long S=0;
+  11          
+  12          unsigned int time=0;//时间变量
+  13            
+  14          void StartModule(void)//启动测距信号
+  15          
+  16          {
+  17   1      
+  18   1        TRIG=1;
+  19   1      
+  20   1        _nop_();
+  21   1      
+  22   1        _nop_();
+  23   1      
+  24   1        _nop_();
+  25   1      
+  26   1        _nop_();
+  27   1      
+  28   1        _nop_();
+  29   1      
+  30   1        _nop_();
+  31   1      
+  32   1        _nop_();
+  33   1      
+  34   1        _nop_();
+  35   1      
+  36   1        _nop_();
+  37   1      
+  38   1        _nop_();
+  39   1      
+  40   1        _nop_();
+  41   1      
+  42   1        _nop_();
+  43   1      
+  44   1        _nop_();
+  45   1      
+  46   1        _nop_();
+  47   1      
+  48   1        _nop_();
+  49   1      
+  50   1        _nop_();
+  51   1      
+  52   1        _nop_();
+  53   1      
+  54   1        _nop_();
+  55   1      
+C51 COMPILER V9.54   CHAOSHENGBO                                                           11/17/2022 19:24:21 PAGE 2   
+
+  56   1        _nop_();
+  57   1      
+  58   1        _nop_();
+  59   1         
+  60   1        _nop_();
+  61   1      
+  62   1        TRIG=0;
+  63   1      
+  64   1       }
+  65          void Conut(void) //计算距离
+  66           {
+  67   1          unsigned char cnt = 0; 
+  68   1           while(!ECHO);//当RX为零时等待
+  69   1      
+  70   1           TR0=1; //开启计数
+  71   1      
+  72   1           while(ECHO && cnt <= 100)  //超时退出
+  73   1          {
+  74   2            cnt++;
+  75   2           }//当RX为1计数并等待
+  76   1      
+  77   1           TR0=0;//关闭计数
+  78   1          
+  79   1           if(cnt <= 100)
+  80   1           {
+  81   2              time=TH0*256+TL0;//读取脉宽长度
+  82   2              S=(time*1.7)/200;//算出来是CM
+  83   2           }
+  84   1           else
+  85   1           {
+  86   2              S = 85;
+  87   2           }
+  88   1      
+  89   1           TH0=0;
+  90   1           TL0=0;
+  91   1      
+  92   1       }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    126    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
